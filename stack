@@ -1,0 +1,40 @@
+class JavaApplication8 
+{
+    public int ukuran;
+    public long [] tumpukan;
+    public int top;
+    
+    public JavaApplication8(int s)
+    {
+        ukuran = s;
+        tumpukan = new long [ukuran];
+        top = 0;
+    }
+    public void push()
+    {
+        Scanner masukan = new Scanner(System.in);
+        int k;
+        System.out.print("Masukkan nilai : ");
+        k=masukan.nextInt();
+        tumpukan[++top] = k;
+    }
+    public void baca()
+    {
+        int i=top;
+        while (i>0){
+            System.out.println(tumpukan[i]);
+            i--;
+    }
+        System.out.println(" ");
+    }  
+}
+
+public class AlgodatP3_J1 {
+    public static void main(String[] args) {
+        JavaApplication8 tumpukan=new JavaApplication8(10);
+        tumpukan.push();
+        tumpukan.push();
+        tumpukan.push();
+        tumpukan.baca();   
+    }
+}    
