@@ -1,0 +1,22 @@
+public class AlgodatP2_J1 {
+    public static void main(String[] args) {
+        LinkedList<String> linkedlist = new LinkedList<>();
+        linkedlist.add("Data 1");
+        linkedlist.add("Data 2");
+        linkedlist.add("Data 3");
+        linkedlist.add("Data 4");
+        linkedlist.add("Data 5");
+        linkedlist.addFirst("Data 0");
+        linkedlist.addLast("Data 6");
+        System.out.println("Output : "+linkedlist+", ukuran : "+linkedlist.size());
+        linkedlist.removeFirst();
+        linkedlist.removeLast();
+        System.out.println("Output : "+linkedlist+", ukuran : "+linkedlist.size());
+        linkedlist.remove(3);
+        System.out.println("Output : "+linkedlist+", ukuran : "+linkedlist.size());
+        Scanner masukan = new Scanner(System.in);
+        System.out.print("Masukkan data baru : ");
+        linkedlist.add(masukan.next());
+        System.out.println("Output : "+linkedlist+", ukuran : "+linkedlist.size());
+    }
+}
