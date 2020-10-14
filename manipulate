@@ -1,0 +1,53 @@
+public class Tugas {
+    public static void main(String[] args) {
+        Scanner masukan = new Scanner(System.in);
+        int x,y,z,jawaban;
+        String z1;
+        ArrayList biodata = new ArrayList();        
+        int jawab=1;
+        int ulang=0;
+        while (ulang<jawab)
+        {
+        System.out.println("Menu : 1.Tambah data ");
+        System.out.println("       2.Hapus data ");
+        System.out.println("       3.Edit data ");
+        System.out.println("       4.Lihat data ");
+        System.out.print("Pilihan = ");
+        x=masukan.nextInt();
+        if(x==1)
+        {System.out.print("Masukkan data yang ingin ditambah : ");
+         z1=masukan.next();
+         biodata.add(z1);
+         System.out.println("Data berhasil ditambah !");}
+        if(x==2)
+        {System.out.print("Index yang ingin dihapus = ");
+         biodata.remove(masukan.nextInt());
+         System.out.println("Data berhasil dihapus !");}  
+        if(x==3)
+        {System.out.println("Masukan index dan isi index yang ingin diedit : ");
+         System.out.print("Index     = ");
+         z=masukan.nextInt();
+         System.out.print("Isi Index = ");
+         z1=masukan.next();
+         biodata.set(z, z1);
+         System.out.println("Data berhasil diedit !");}
+        if(x==4)
+        {System.out.println("Isi Array = "+biodata);}
+        
+        System.out.println("\nUlangi Program ? 1. Ya ");
+            System.out.println("                 2. Tidak \n");
+            System.out.print("Pilihan = ");
+            
+        jawaban=masukan.nextInt(); //inputan untuk menentukan apakah program ingin diulang atau tidak
+            if (jawaban==1)
+            {
+                jawab = 1; //jika jawab masih bernilai 1 maka nilai ulang<jawab sehingga program akan berulang lagi
+            }
+            else 
+            {
+                System.out.println("---------PROGRAM SELESAI---------");
+                jawab = jawab-1; //jika jawab bernilai 0 atau nilai ulang>=jawab maka loop akan berhenti
+            }
+        }
+    }
+}
