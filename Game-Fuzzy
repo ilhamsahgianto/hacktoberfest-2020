@@ -1,0 +1,679 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class FuzzyLogic : MonoBehaviour
+{
+    public int hp, hpg;
+    public float acc, totalR, totalRZ;
+    public float hpSedikit, hpCukup, hpBanyak;
+    public float accTB, accKB, accB, accSB;
+    public float x, y, r1, r2, r3, r4, r5, r6, r7, r8, r9, r10, r11, r12;
+    public float z1, z2, z3, z4, z5, z6, z7, z8, z9, z10, z11, z12;
+    public float minz1, minz2, minz3, minz4, minz5, minz6, minz7, minz8, minz9, minz10, minz11, minz12;
+    public float low1, low2, low3, low4, low5, low6, low7, low8, low9, low10, low11, low12;
+    public bool hpIsSedikit, hpIsCukup, hpIsBanyak;
+    public bool accIsTB, accIsKB, accIsB, accIsSB;
+    public bool hpgIsKecil, hpgIsBesar;
+
+    private void Start()
+    {
+        //SugenoFuzzy();
+    }
+
+    private void Update()
+    {
+        //SugenoFuzzy();
+    }
+
+    public void SugenoFuzzy()
+    {
+        GetComponent<PlayerHealth>().LoadPlayer();
+        hp = GetComponent<PlayerHealth>().currentHealth;
+        x = hp;
+        acc = GetComponent<Player>().accuracy;
+        y = acc;
+        Fuzzyfikasi();
+        implikasi();
+        defuzzyfikasi();
+    }
+
+    public void Fuzzyfikasi()
+    {
+        //Nilai var untuk Himpunan dari variabel HP
+        if (hp <= 33)
+        {
+            hpIsSedikit = true;
+            hpIsCukup = false;
+            hpIsBanyak = false;
+            //varhp = 1;
+            //varhp2 = 0;
+            hpSedikit = 1;
+            hpCukup = 0;
+            hpBanyak = 0;
+        }
+        if(hp > 33 && hp < 66)
+        {
+            hpIsSedikit = true;
+            hpIsCukup = true;
+            hpIsBanyak = false;
+            HPsedikitKurvaTurun();
+            HPcukupKurvaNaik();
+        }
+        if (hp >= 66)
+        {
+            hpIsSedikit = false;
+            hpIsCukup = true;
+            hpIsBanyak = true;
+            if (hp == 66)
+            {
+                hpIsBanyak = false;
+            }
+            if (hp >= 100)
+            {
+                hpIsCukup = false;
+            }                    
+            HPcukupKurvaTurun();
+            HPbanyakKurvaNaik();
+        }
+
+        //Nilai var untuk himpunan dari variabel Accuracy
+        if (acc <= 33)
+        {
+            accIsTB = true;
+            accIsKB = true;
+            accIsB = false;
+            accIsSB = false;
+            if (acc == 0)
+            {
+                accIsKB = false;
+            }
+            if (acc == 33)
+            {
+                accIsTB = false;
+            }
+            AccTBKurvaTurun();
+            AccKBKurvaNaik();
+        }
+        if (acc > 33 && acc < 66)
+        {
+            accIsTB = false;
+            accIsKB = true;
+            accIsB = true;
+            accIsSB = false;
+            AccKBKurvaTurun();
+            AccBagusKurvaNaik();
+        }
+        if (acc >= 66 && acc <= 100)
+        {
+            accIsTB = false;
+            accIsKB = false;
+            accIsB = true;
+            accIsSB = true;
+            if (acc == 66)
+            {
+                accIsSB = false;
+            }
+            if (acc == 100)
+            {
+                accIsB = false;
+            }
+            AccBagusKurvaTurun();
+            AccSBKurvaNaik();
+        }
+    }
+
+    //Himpunan dari variabel INPUT-------------------------------------------------------------------------------------
+    //HP
+    public void HPsedikitKurvaTurun()
+    {
+        hpSedikit = ((66 - x) / (66 - 33));
+    }
+    public void HPcukupKurvaNaik()
+    {
+        hpCukup = ((x - 33) / (66 - 33));    
+    }
+    public void HPcukupKurvaTurun()
+    {
+        hpCukup = ((100 - x) / (100 - 66));
+    }
+    public void HPbanyakKurvaNaik()
+    {
+        hpBanyak = ((x - 66) / (100 - 66));
+    }
+    //Accuracy
+    public void AccTBKurvaTurun()
+    {
+        accTB = ((33 - y) / (33 - 0));
+    }
+    public void AccKBKurvaNaik() 
+    {
+        accKB = ((y - 0) / (33 - 0));
+    }
+    public void AccKBKurvaTurun()
+    {
+        accKB = ((66 - y) / (66 - 33));
+    }
+    public void AccBagusKurvaNaik()
+    {
+        accB = ((y - 33) / (66 - 33));
+    }
+    public void AccBagusKurvaTurun()
+    {
+        accB = ((100 - y) / (100 - 66));
+    }
+    public void AccSBKurvaNaik()
+    {
+        accSB = ((y - 66) / (100 - 66));
+    }
+
+    //Mencari nilai minimal
+    public void implikasi()
+    {
+        minimal();
+        //Jika hpSedikit lebih kecil dari accTB, accKB, accB, atau accSB
+        if (hpSedikit <= accTB || hpSedikit <= accKB || hpSedikit <= accB || hpSedikit <= accSB)
+        {
+            if (hpSedikit * accTB > 0 || hpSedikit * accKB > 0 || hpSedikit * accB > 0)
+            {
+                if (hpSedikit * accTB > 0)
+                {
+                    r1 = low1;
+                    float hsl1 = r1 * (100 - 50) - 100;
+                    minz1 = hsl1;
+                    z1 = minz1 * (-1);
+                }
+                if (hpSedikit * accKB > 0)
+                {
+                    r2 = low2;
+                    float hsl2 = r2 * (100 - 50) - 100;
+                    minz2 = hsl2;
+                    z2 = minz2 * (-1);
+                }
+                if (hpSedikit * accB > 0)
+                {
+                    r3 = low3;
+                    float hsl3 = r3 * (100 - 50) - 100;
+                    minz3 = hsl3;
+                    z3 = minz3 * (-1);
+                }
+            }            
+            if (hpSedikit * accSB > 0)
+            {
+                r4 = low4;
+                float hsl4 = r4 * (100 - 50) + 50;
+                z4 = hsl4;
+            }
+
+            if (hpSedikit * accTB == 0 || hpSedikit * accKB == 0 || hpSedikit * accB == 0 || hpSedikit * accSB == 0)
+            {
+                if (hpSedikit * accTB == 0)
+                {
+                    r1 = 0; z1 = 0;
+                }
+                if (hpSedikit * accKB == 0)
+                {
+                    r2 = 0; z2 = 0;
+                }
+                if (hpSedikit * accB == 0)
+                {
+                    r3 = 0; z3 = 0;
+                }
+                if (hpSedikit * accSB == 0)
+                {
+                    r4 = 0; z4 = 0;
+                }
+            }
+        }
+        //Jika accTB lebih kecil dari hpSedikit, hpCukup, atau hpBanyak
+        if (accTB <= hpSedikit || accTB <= hpCukup || accTB <= hpBanyak)
+        {
+            if (accTB * hpSedikit > 0 || accTB * hpCukup > 0 || accTB * hpBanyak > 0)
+            {
+                if (accTB * hpSedikit > 0)
+                {
+                    r1 = low1;
+                    float hsl1 = r1 * (100 - 50) - 100;
+                    minz1 = hsl1;
+                    z1 = minz1 * (-1);
+                }
+                if (accTB * hpCukup > 0)
+                {
+                    r5 = low5;
+                    float hsl5 = r5 * (100 - 50) - 100;
+                    minz5 = hsl5;
+                    z5 = minz5 * (-1);
+                }
+                if (accTB * hpBanyak > 0)
+                {
+                    r9 = low9;
+                    float hsl9 = r9 * (100 - 50) - 100;
+                    minz9 = hsl9;
+                    z9 = minz9 * (-1);
+                }                
+            }
+            if (accTB * hpSedikit == 0 || accTB * hpCukup == 0 || accTB * hpBanyak == 0)
+            {
+                if (accTB * hpSedikit == 0)
+                {
+                    r1 = 0; z1 = 0;
+                }
+                if (accTB * hpCukup == 0)
+                {
+                    r5 = 0; z5 = 0;
+                }
+                if (accTB * hpBanyak == 0)
+                {
+                    r9 = 0; z9 = 0;
+                }
+            }
+        }
+        //Jika hpCukup lebih kecil dari accTB, accKB, accB atau accSB
+        if (hpCukup <= accTB || hpCukup <= accKB || hpCukup <= accB || hpCukup <= accSB)
+        {
+            if (hpCukup * accTB > 0 || hpCukup * accKB > 0)
+            {
+                if (hpCukup * accTB > 0)
+                {
+                    r5 = low5;
+                    float hsl5 = r5 * (100 - 50) - 100;
+                    minz5 = hsl5;
+                    z5 = minz5 * (-1);
+                }
+                if (hpCukup * accKB > 0)
+                {
+                    r6 = low6;
+                    float hsl6 = r6 * (100 - 50) - 100;
+                    minz6 = hsl6;
+                    z6 = minz6 * (-1);
+                }
+            }
+            if (hpCukup * accB > 0 || hpCukup * accSB > 0)
+            {
+                if (hpCukup * accB > 0)
+                {
+                    r7 = low7;
+                    float hsl1 = r1 * (100 - 50) + 50;
+                    z1 = hsl1;
+                }
+                if (hpCukup * accSB > 0)
+                {
+                    r8 = low8;
+                    float hsl2 = r2 * (100 - 50) + 50;
+                    z2 = hsl2;
+                }
+            }
+            if (hpCukup * accTB == 0 || hpCukup * accKB == 0 || hpCukup * accB == 0 || hpCukup * accSB == 0)
+            {
+                if (hpCukup * accTB == 0)
+                {
+                    r5 = 0; z5 = 0;
+                }
+                if (hpCukup * accKB == 0)
+                {
+                    r6 = 0; z6 = 0;
+                }
+                if (hpCukup * accB == 0)
+                {
+                    r7 = 0; z7 = 0;
+                }
+                if (hpCukup * accSB == 0)
+                {
+                    r8 = 0; z8 = 0;
+                }
+            }
+        }
+        //Jika accKB lebih kecil dari hpSedikit, hpCukup, atau hpBanyak
+        if (accKB <= hpSedikit || accKB <= hpCukup || accKB <= hpBanyak)
+        {
+            if (accKB * hpSedikit > 0 || accKB * hpCukup > 0)
+            {
+                if (accKB * hpSedikit > 0)
+                {
+                    r2 = low2;
+                    float hsl2 = r2 * (100 - 50) - 100;
+                    minz2 = hsl2;
+                    z2 = minz2 * (-1);
+                }
+                if (accKB * hpCukup > 0)
+                {
+                    r6 = low6;
+                    float hsl3 = r3 * (100 - 50) - 100;
+                    minz3 = hsl3;
+                    z3 = minz3 * (-1);
+                }
+            }
+            if (accKB * hpBanyak > 0)
+            {
+                r10 = low10;
+                float hsl10 = r10 * (100 - 50) + 50;
+                z10 = hsl10;
+            }
+
+            if (accKB * hpSedikit == 0 || accKB * hpCukup == 0 || accKB * hpBanyak == 0)
+            {
+                if (accKB * hpSedikit == 0)
+                {
+                    r2 = 0; z2 = 0;
+                }
+                if (accKB * hpCukup == 0)
+                {
+                    r6 = 0; z6 = 0;
+                }
+                if (accKB * hpBanyak == 0)
+                {
+                    r10 = 0; z10 = 0;
+                }
+            }
+        }
+        //Menentukan R3
+        //Jika hpBanyak lebih kecil dari accTB, accKB, accB atau accSB
+        if (hpBanyak <= accTB || hpBanyak <= accKB || hpBanyak <= accB || hpBanyak <= accSB)
+        {
+            if (hpBanyak * accTB > 0)
+            {
+                r9 = low9;
+                float hsl9 = r9 * (100 - 50) - 100;
+                minz9 = hsl9;
+                z9 = minz9 * (-1);
+            }
+            if (hpBanyak * accKB > 0 || hpBanyak * accB > 0 || hpBanyak * accSB > 0)
+            {
+                if (hpBanyak * accKB > 0)
+                {
+                    r10 = low10;
+                    float hsl10 = r10 * (100 - 50) + 50;
+                    z10 = hsl10;
+                }
+                if (hpBanyak * accB > 0)
+                {
+                    r11 = low11;
+                    float hsl11 = r11 * (100 - 50) + 50;
+                    z11 = hsl11;
+                }
+                if (hpBanyak * accSB > 0)
+                {
+                    r12 = low12;
+                    float hsl12 = r12 * (100 - 50) + 50;
+                    z12 = hsl12;
+                }
+            }
+            if (hpBanyak * accTB == 0 || hpBanyak * accKB == 0 || hpBanyak * accB == 0 || hpBanyak * accSB == 0)
+            {
+                if (hpBanyak * accTB == 0)
+                {
+                    r9 = 0; z9 = 0;
+                }
+                if (hpBanyak * accKB == 0)
+                {
+                    r10 = 0; z10 = 0;
+                }
+                if (hpBanyak * accB == 0)
+                {
+                    r11 = 0; z11 = 0;
+                }
+                if (hpBanyak * accSB == 0)
+                {
+                    r12 = 0; z12 = 0;
+                }
+            }
+        }
+        //Jika accB lebih kecil dari hpSedikit, hpCukup atau hpBanyak
+        if (accB <= hpSedikit || accB <= hpCukup || accB <= hpBanyak)
+        {
+            if (accB * hpSedikit > 0)
+            {
+                r3 = low3;
+                float hsl3 = r3 * (100 - 50) - 100;
+                minz3 = hsl3;
+                z3 = minz3 * (-1);
+            }
+            if (accB * hpCukup > 0 || accB * hpBanyak > 0)
+            {
+                if (accB * hpCukup > 0)
+                {
+                    r7 = low7;
+                    float hsl7 = r7 * (100 - 50) + 50;
+                    z7 = hsl7;
+                }
+                if (accB * hpBanyak > 0)
+                {
+                    r11 = low11;
+                    float hsl11 = r11 * (100 - 50) + 50;
+                    z11 = hsl11;
+                }
+            }
+
+            if (accB * hpSedikit == 0 || accB * hpCukup == 0 || accB * hpBanyak == 0)
+            {
+                if (accB * hpSedikit == 0)
+                {
+                    r3 = 0; z3 = 0;
+                }
+                if (accB * hpCukup == 0)
+                {
+                    r7 = 0; z7 = 0;
+                }
+                if (accB * hpBanyak == 0)
+                {
+                    r11 = 0; z11 = 0;
+                }
+            }
+        }        
+        //Jika accSB lebih kecil dari hpSedikit, hpCukup atau hpBanyak
+        if(accSB <= hpSedikit || accSB <= hpCukup || accSB <= hpBanyak)
+        {
+            if (accSB * hpSedikit > 0 || accSB * hpCukup > 0 || accSB * hpBanyak > 0)
+            {
+                if (accSB * hpSedikit > 0)
+                {
+                    r4 = low4;
+                    float hsl4 = r4 * (100 - 50) + 50;
+                    z4 = hsl4;
+                }
+                if (accSB * hpCukup > 0)
+                {
+                    r8 = low8;
+                    float hsl8 = r8 * (100 - 50) + 50;
+                    z8 = hsl8;
+                }
+                if (accSB * hpBanyak > 0)
+                {
+                    r12 = low12;
+                    float hsl12 = r12 * (100 - 50) + 50;
+                    z12 = hsl12;
+                }
+            }
+
+            if (accSB * hpSedikit == 0 || accSB * hpCukup == 0 || accSB * hpBanyak == 0)
+            {
+                if (accSB * hpSedikit == 0)
+                {
+                    r4 = 0; z4 = 0;
+                }
+                if (accSB * hpCukup == 0)
+                {
+                    r8 = 0; z8 = 0;
+                }
+                if (accSB * hpBanyak == 0)
+                {
+                    r12 = 0; z12 = 0;
+                }
+            }
+        }
+    }
+
+    public void minimal()
+    {
+        //Menentukan nilai Minimal 1
+        if (hpSedikit <= accTB)
+        {
+            low1 = hpSedikit;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        if (accTB < hpSedikit)
+        {
+            low1 = accTB;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        //Menentukan nilai Minimal 2
+        if (hpSedikit <= accKB)
+        {
+            low2 = hpSedikit;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        if (accKB < hpSedikit)
+        {
+            low2 = accKB;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        //Menentukan nilai Minimal 3
+        if (hpSedikit <= accB)
+        {
+            low3 = hpSedikit;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        if (accB < hpSedikit)
+        {
+            low3 = accB;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        //Menentukan nilai Minimal 4
+        if (hpSedikit <= accSB)
+        {
+            low4 = hpSedikit;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        if (accSB < hpSedikit)
+        {
+            low4 = accSB;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        //Menentukan nilai Minimal 5
+        if (hpCukup <= accTB)
+        {
+            low5 = hpCukup;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        if (accTB < hpCukup)
+        {
+            low5 = accTB;
+            hpgIsKecil = true;
+        }
+        //Menentukan nilai Minimal 6
+        if (hpCukup <= accKB)
+        {
+            low6 = hpCukup;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        if (accKB < hpCukup)
+        {
+            low6 = accKB;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        //Menentukan nilai Minimal 7
+        if (hpCukup <= accB)
+        {
+            low7 = hpCukup;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        if (accB < hpCukup)
+        {
+            low7 = accB;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        //Menentukan nilai Minimal 8
+        if (hpCukup <= accSB)
+        {
+            low8 = hpCukup;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        if (accSB < hpCukup)
+        {
+            low8 = accSB;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        //Menentukan nilai Minimal 9
+        if (hpBanyak <= accTB)
+        {
+            low9 = hpBanyak;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        if (accTB < hpBanyak)
+        {
+            low9 = accTB;
+            hpgIsKecil = true;
+            hpgIsBesar = false;
+        }
+        //Menentukan nilai Minimal 10
+        if (hpBanyak <= accKB)
+        {
+            low10 = hpBanyak;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        if (accKB < hpBanyak)
+        {
+            low10 = accKB;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        //Menentukan nilai Minimal 11
+        if (hpBanyak <= accB)
+        {
+            low11 = hpBanyak;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        if (accB < hpBanyak)
+        {
+            low11 = accB;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        //Menentukan nilai Minimal 12
+        if (hpBanyak <= accSB)
+        {
+            low12 = hpBanyak;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+        if (accSB < hpBanyak)
+        {
+            low12 = accSB;
+            hpgIsBesar = true;
+            hpgIsKecil = false;
+        }
+    }
+
+    public void defuzzyfikasi()
+    {
+        totalRZ = r1 * z1 + r2 * z2 + r3 * z3 + r4 * z4 + r5 * z5 + r6 * z6 + r7 * z7 + r8 * z8 + r9 * z9 + r10 * z10 + r11 * z11 + r12 * z12;
+        totalR = r1 + r2 + r3 + r4 + r5 + r6 + r7 + r8 + r9 + r10 + r11 + r12;
+        hpg =(int) (totalRZ / totalR);
+    }
+
+    public void backtozero()
+    {
+        hpg = 0;
+        totalR = 0; totalRZ = 0;
+        hpSedikit = 0; hpCukup = 0; hpBanyak=0;
+
+    }
+}
