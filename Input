@@ -1,0 +1,61 @@
+public class AlgodatP4 {
+    AlgodatP4 head, tail;
+    int id;
+    AlgodatP4 next;
+    static Scanner in=new Scanner(System.in);
+    public AlgodatP4(){
+        head=null;
+        tail=null;
+    }
+
+    public void input(){
+        System.out.print("Masukkan Data       : ");
+        id=in.nextInt();
+    }
+
+    public void baca(){
+        System.out.println(id);
+    }
+
+    public void enqueue (){
+        AlgodatP4 baru = new AlgodatP4();
+        baru.input();
+        if (head==null)
+            head=baru;
+        else
+            tail.next= baru;
+            tail=baru;
+    }
+
+    public void lihat (){
+        if (head== null)
+            System.out.println("Tidak ada data");
+        else {
+            System.out.println("data :");
+            for (AlgodatP4 a=head; a!=null; a=a.next)
+                a.baca();
+        }
+    }
+
+    public static void main(String[] args){
+        int menu=0;
+        AlgodatP4 que=new AlgodatP4();
+        while(menu!=4){
+            System.out.println("===== Menu =====");
+            System.out.println("1.Masukkan data  ");
+            System.out.println("2.Lihat Data ");
+            System.out.println("3.Keluar ");
+            System.out.print("Pilihan : ");
+            menu=in.nextInt();
+            if(menu==1){
+                System.out.print("Masukan batas antrian : ");
+                int n= in.nextInt();
+                for (int i=0; i<n; i++){
+                    que.enqueue();
+                }
+            }
+            else if(menu==2)que.lihat();
+            else if(menu==3)System.exit(0);
+        }
+    }
+}
